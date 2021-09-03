@@ -91,7 +91,7 @@ std::string Config::getModuleStr() {
 	return "wkWormOrder";
 }
 std::string Config::getVersionStr() {
-	return "v0.1.0";
+	return "v1.0.0";
 }
 
 std::string Config::getBuildStr() {
