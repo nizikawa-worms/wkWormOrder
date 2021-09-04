@@ -9,7 +9,7 @@
 BitmapImage* __stdcall hookSetNameTextbox(TeamBarStruct * This, BitmapTextbox * box, char *text, int text_color, int color1, int color2, int * width, int * height, int opacity) {
 	DWORD ddmain = *(DWORD*)(This->gameglobal_dwordC + 0x24);
 	DWORD teamdata = ddmain + 0x450 + (This->team_number_dword4-1)*0xBB8;
-	BYTE ownerId = *(BYTE*)teamdata;
+	char ownerId = *(char*)teamdata;
 	if(ownerId >= 0) {
 		char *ownerName = (char *) (ddmain + 4 + 0x50 * ownerId);
 		if(strlen(ownerName)) {
