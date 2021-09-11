@@ -4,9 +4,13 @@
 
 #include "CGameTask.h"
 #include "../Constants.h"
+#include "../BitmapImage.h"
+#include "../BitmapTextbox.h"
 
 class CTaskWorm : public CGameTask {
 public:
+	enum OrderState {OrderOff, OrderAll};
+
 	int unknownF0; // 0xF0
 	int unknownF4; // 0xF4
 	int unknownF8; // 0xF8
@@ -203,7 +207,14 @@ public:
 	int unknown3F4; // 0x3F4
 	int unknown3F8; // 0x3F8
 
+private:
+	static inline OrderState orderState = OrderOff;
+	static void hookDrawWormTextboxes_patch1();
+	static BitmapImage* __stdcall hookSetNameTextbox(CTaskWorm * worm, BitmapTextbox * box, char *text, int text_color, int color1, int color2, int * width, int * height, int opacity);
+public:
 	static void install();
+	static OrderState getOrderState();
+	static void setOrderState(OrderState orderState);
 };
 
 

@@ -15,7 +15,7 @@ private:
 	static inline bool moduleEnabled = true;
 	static inline bool ignoreVersionCheck = false;
 	static inline std::filesystem::path waDir;
-	
+
 	static inline bool useOffsetCache = true;
 	static inline bool scrambleWormOrder = false;
 	static inline bool teamNameShowOwner = false;
@@ -33,6 +33,8 @@ public:
 	static std::string getBuildStr();
 	static std::string getModuleStr();
 	static std::string getFullStr();
+	static std::string getModuleStrWithWebsite();
+	static std::string getModuleStrWithVersion();
 
 	static bool isUseOffsetCache();
 	static std::string getWaVersionAsString();

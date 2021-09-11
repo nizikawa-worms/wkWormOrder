@@ -3,6 +3,7 @@
 #include "Config.h"
 #include "Debugf.h"
 #include <filesystem>
+#include <format>
 
 namespace fs = std::filesystem;
 
@@ -90,9 +91,19 @@ int Config::waVersionCheck() {
 std::string Config::getModuleStr() {
 	return "wkWormOrder";
 }
+
 std::string Config::getVersionStr() {
-	return "v1.0.1";
+	return "v1.1.0";
 }
+
+std::string Config::getModuleStrWithWebsite() {
+	return std::format("{} {} (https://worms2d.info/wkWormOrder)", getModuleStr(), getVersionStr());
+}
+
+std::string Config::getModuleStrWithVersion() {
+	return std::format("{} {}", getModuleStr(), getVersionStr());
+}
+
 
 std::string Config::getBuildStr() {
 	return __DATE__ " " __TIME__;

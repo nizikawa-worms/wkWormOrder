@@ -29,9 +29,11 @@ add_library(wkWormOrder SHARED
         src/entities/CTask.h
         src/entities/CGameTask.h
         src/entities/CTaskWorm.cpp src/entities/CTaskWorm.h
-
+        src/entities/CTaskTeam.cpp src/entities/CTaskTeam.h
+        src/LobbyScrambler.cpp src/LobbyScrambler.h
+        src/Chat.cpp src/Chat.h
         ${CMAKE_CURRENT_BINARY_DIR}/resource.rc
-        src/LobbyScrambler.cpp src/LobbyScrambler.h src/entities/CTaskTeam.cpp)
+        )
 
 set_property(TARGET wkWormOrder hacklib PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 

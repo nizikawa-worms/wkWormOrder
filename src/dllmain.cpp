@@ -9,6 +9,7 @@
 #include "entities/CTaskWorm.h"
 #include "entities/CTaskTeam.h"
 #include "LobbyScrambler.h"
+#include "Chat.h"
 #include "Hooks.h"
 #include <chrono>
 
@@ -20,6 +21,7 @@ void install() {
 	CTaskWorm::install();
 	CTaskTeam::install();
 	LobbyScrambler::install();
+	Chat::install();
 }
 
 // Thanks StepS

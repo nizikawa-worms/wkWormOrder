@@ -2,6 +2,7 @@
 #include "Hooks.h"
 #include "BitmapImage.h"
 #include "Config.h"
+#include "entities/CTaskWorm.h"
 
 
 DWORD origInitializeW2App;
@@ -18,6 +19,7 @@ DWORD __stdcall W2App::hookInitializeW2App(DWORD DD_Game_a2, DWORD DD_Display_a3
 	addrWSGameNet = WS_GameNet_a8;
 	addrW2Wrapper = DD_W2Wrapper;
 
+	CTaskWorm::setOrderState(CTaskWorm::OrderOff);
 
 	_asm push WS_GameNet_a8
 	_asm push WAV_CDrom_a7

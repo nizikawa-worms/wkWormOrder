@@ -5,6 +5,8 @@
 
 #include "CTask.h"
 #include "../BitmapImage.h"
+#include "../BitmapTextbox.h"
+
 typedef unsigned char BYTE;
 
 struct TeamBarStruct {
@@ -14,14 +16,16 @@ struct TeamBarStruct {
 	DWORD gameglobal_dwordC;
 	DWORD textbox_dword10;
 	BitmapImage * energy_bar_bitmap_dword14;
-	DWORD dword18;
-	DWORD dword1C;
+	DWORD width_dword18;
+	DWORD highlight_dword1C;
 	DWORD dword20;
 };
 
 
 class CTaskTeam : public CTask {
 public:
+	enum OwnerState {OwnerOff, OwnerOn};
+
 	int unknown30; // 0x30
 	int unknown34; // 0x34
 	int team_number_dword38; // 0x38
@@ -294,7 +298,15 @@ public:
 	int unknown458; // 0x458
 	int unknown45C; // 0x45C
 
+
+private:
+	static inline OwnerState ownerState = OwnerOff;
+	static BitmapImage* __stdcall hookSetNameTextbox(TeamBarStruct * This, BitmapTextbox * box, char *text, int text_color, int color1, int color2, int * width, int * height, int opacity);
+	static void hookDrawTeamBar_patch1();
+public:
 	static void install();
+	static OwnerState getOwnerState();
+	static void setOwnerState(OwnerState ownerState);
 };
 
 #endif //WKWORMORDER_CTASKTEAM_H
