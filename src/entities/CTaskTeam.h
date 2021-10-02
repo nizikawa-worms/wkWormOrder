@@ -307,6 +307,7 @@ public:
 	static void install();
 	static OwnerState getOwnerState();
 	static void setOwnerState(OwnerState ownerState);
+	static void getMyTeams(std::vector<std::pair<std::string, std::vector<std::string>>> & teams);
 };
 
 #endif //WKWORMORDER_CTASKTEAM_H

@@ -93,7 +93,7 @@ std::string Config::getModuleStr() {
 }
 
 std::string Config::getVersionStr() {
-	return "v1.1.0";
+	return "v1.2.0";
 }
 
 std::string Config::getModuleStrWithWebsite() {

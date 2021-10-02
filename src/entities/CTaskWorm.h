@@ -9,7 +9,7 @@
 
 class CTaskWorm : public CGameTask {
 public:
-	enum OrderState {OrderOff, OrderAll};
+	enum OrderState {OrderOff, OrderMy, OrderAll};
 
 	int unknownF0; // 0xF0
 	int unknownF4; // 0xF4

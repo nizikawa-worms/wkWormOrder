@@ -2,8 +2,8 @@
 #include "Chat.h"
 #include "Hooks.h"
 #include "Utils.h"
-#include <format>
 #include "Config.h"
+#include <fmt/format.h>
 #include "entities/CTaskWorm.h"
 #include "Debugf.h"
 #include "W2App.h"
@@ -11,24 +11,48 @@
 
 int Chat::handleOrderCommand(std::string &message, std::vector<std::string> &parts, int a1, int a3) {
 	auto orderState = CTaskWorm::getOrderState();
-	if(orderState == CTaskWorm::OrderOff) {
-		CTaskWorm::setOrderState(CTaskWorm::OrderAll);
-		callOriginalOnChatInput(a1, (char*)std::format("/me has enabled displaying order of worms belonging to all players - {}", Config::getModuleStrWithWebsite()).c_str(), a3);
-	} else {
-		CTaskWorm::setOrderState(CTaskWorm::OrderOff);
-		callOriginalOnChatInput(a1, (char*)std::format("/me has disabled all features of {}", Config::getModuleStrWithWebsite()).c_str(), a3);
-	}
+	if (parts.size() >= 2) {
+		auto &option = parts[1];
+		if (option == "off") {
+			if (orderState != CTaskWorm::OrderOff) {
+				CTaskWorm::setOrderState(CTaskWorm::OrderOff);
+				callOriginalOnChatInput(a1, (char*)fmt::format("/me has disabled displaying worm order - {}", Config::getModuleStrWithWebsite()).c_str(), a3);
+			}
+		} else if (option == "my" || option == "me") {
+			if (orderState != CTaskWorm::OrderMy) {
+				CTaskWorm::setOrderState(CTaskWorm::OrderMy);
+				callOriginalOnChatInput(a1, (char*)fmt::format("/me has enabled displaying order of worms belonging to him - {}", Config::getModuleStrWithWebsite()).c_str(), a3);
+				sendMyTeamOrder(a1, a3);
+			}
+		} else if (option == "all") {
+			if (orderState != CTaskWorm::OrderAll) {
+				CTaskWorm::setOrderState(CTaskWorm::OrderAll);
+				callOriginalOnChatInput(a1, (char *) fmt::format("/me has enabled displaying order of worms belonging to all players - {}", Config::getModuleStrWithWebsite()).c_str(), a3);
+				sendMyTeamOrder(a1, a3);
+			}
+		} else if (option == "print") {
+			sendMyTeamOrder(a1, a3);
+		} else throw std::runtime_error(fmt::format("Unknown option: {}. Available options: /order my|all|off|print", parts[1]));
+	} else throw std::runtime_error("Not enough arguments. Format: /order my|all|off|print");
 	return 1;
+}
+
+void Chat::sendMyTeamOrder(int a1, int a3) {
+	std::vector<std::pair<std::string, std::vector<std::string>>> teams;
+	CTaskTeam::getMyTeams(teams);
+	for(auto & team : teams) {
+		callOriginalOnChatInput(a1, (char *)fmt::format("/me {}:    {}", team.first, fmt::join(team.second,"   ")).c_str(), a3);
+	}
 }
 
 int Chat::handleOwnerCommand(std::string &message, std::vector<std::string> &parts, int a1, int a3) {
 	auto ownerState = CTaskTeam::getOwnerState();
 	if(ownerState == CTaskTeam::OwnerOff) {
 		CTaskTeam::setOwnerState(CTaskTeam::OwnerOn);
-		callShowChatMessage(std::format("Team owner feature enabled.    ({})", Config::getModuleStrWithVersion()), 6);
+		callShowChatMessage(fmt::format("Team owner feature enabled.    ({})", Config::getModuleStrWithVersion()), 6);
 	} else {
 		CTaskTeam::setOwnerState(CTaskTeam::OwnerOff);
-		callShowChatMessage(std::format("Team owner feature disabled.    ({})", Config::getModuleStrWithVersion()), 6);
+		callShowChatMessage(fmt::format("Team owner feature disabled.    ({})", Config::getModuleStrWithVersion()), 6);
 	}
 	return 1;
 }
@@ -51,7 +75,7 @@ int Chat::onChatInput(int a1, char * msg, int a3) {
 			}
 		}
 	} catch(std::exception & e) {
-		callShowChatMessage(std::format("{}    ({})", e.what(), Config::getModuleStrWithVersion()), 1);
+		callShowChatMessage(fmt::format("{}    ({})", e.what(), Config::getModuleStrWithVersion()), 1);
 	}
 	return 0;
 }

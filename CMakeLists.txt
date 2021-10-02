@@ -7,6 +7,8 @@ add_library(hacklib STATIC
         lib/hacklib/ExeFile.cpp lib/hacklib/ExeFile_WIN32.cpp
         lib/hacklib/PatternScanner.cpp lib/hacklib/Memory_WIN32.cpp)
 
+add_subdirectory(lib/fmt)
+
 link_directories(lib)
 include_directories(include lib/hacklib)
 
@@ -35,6 +37,6 @@ add_library(wkWormOrder SHARED
         ${CMAKE_CURRENT_BINARY_DIR}/resource.rc
         )
 
-set_property(TARGET wkWormOrder hacklib PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+set_property(TARGET wkWormOrder hacklib fmt PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 
-target_link_libraries(wkWormOrder hacklib capstone Polyhook_2 version)
+target_link_libraries(wkWormOrder hacklib capstone Polyhook_2 version fmt::fmt)

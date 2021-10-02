@@ -5,6 +5,7 @@
 #include "../W2App.h"
 #include "../Utils.h"
 #include "../Config.h"
+#include <fmt/format.h>
 
 
 BitmapImage* __stdcall CTaskWorm::hookSetNameTextbox(CTaskWorm * worm, BitmapTextbox * box, char *text, int text_color, int color1, int color2, int * width, int * height, int opacity) {
@@ -13,16 +14,18 @@ BitmapImage* __stdcall CTaskWorm::hookSetNameTextbox(CTaskWorm * worm, BitmapTex
 			BYTE mymachine = *(BYTE *) (ddmain + 0xD9DC);
 			DWORD ddgame = W2App::getAddrDdGame();
 			if((ddgame && *(BYTE *) (ddgame + 0x490)) // replay
-				|| (mymachine == team->owner_byte40) // my worms
+				|| (orderState == OrderMy && mymachine == team->owner_byte40) // my worms
 				|| (orderState == OrderAll)) {
-				std::string buff = Config::getWormNameFormat();
-				Utils::replaceString(buff, "{name}", text);
-				Utils::replaceString(buff, "{number}", std::to_string(worm->wormnumber_dword100));
+				std::string buff;
+				try {
+					buff = fmt::format(Config::getWormNameFormat(), fmt::arg("name", text), fmt::arg("number", worm->wormnumber_dword100));
+				} catch(std::exception & e) {
+					buff = fmt::format("Format error: {}", e.what());
+				}
 				return BitmapTextbox::origTextboxSetText(box, (char *) buff.c_str(), text_color, color1, color2, width, height, opacity);
 			}
 		}
 	}
-
 	return BitmapTextbox::origTextboxSetText(box, text, text_color, color1, color2, width, height, opacity);
 }
 

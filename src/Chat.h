@@ -15,6 +15,7 @@ private:
 	static void __stdcall hookOnChatInput(int a3);
 public:
 	static void callShowChatMessage(std::string msg, int color);
+	static void sendMyTeamOrder(int a1, int a3);
 	static void install();
 };
 

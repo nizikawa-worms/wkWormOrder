@@ -5,30 +5,54 @@
 #include "../Utils.h"
 #include "../W2App.h"
 #include "../Debugf.h"
+#include <fmt/format.h>
 
 BitmapImage* __stdcall CTaskTeam::hookSetNameTextbox(TeamBarStruct * This, BitmapTextbox * box, char *text, int text_color, int color1, int color2, int * width, int * height, int opacity) {
 	if(ownerState == OwnerOn) {
 		DWORD ddmain = *(DWORD *) (This->gameglobal_dwordC + 0x24);
 		DWORD teamdata = ddmain + 0x450 + (This->team_number_dword4 - 1) * 0xBB8;
 		char ownerId = *(char *) teamdata;
+		std::string owner;
 		if (ownerId >= 0) {
-			char *ownerName = (char *) (ddmain + 4 + 0x50 * ownerId);
-			if (strlen(ownerName)) {
-				DWORD totalhp = 0;
-				DWORD addr = This->gameglobal_dwordC + 0x4188 + 1308 * This->team_number_dword4;
-				for(int i=0; i < 8; i++) {
-					totalhp += *(WORD*)addr;
-					addr += 156;
-				}
-				std::string buff = Config::getTeamNameFormat();
-				Utils::replaceString(buff, "{name}", text);
-				Utils::replaceString(buff, "{owner}", ownerName);
-				Utils::replaceString(buff, "{hp}", std::to_string(totalhp));
-				return BitmapTextbox::origTextboxSetText(box, (char *) buff.c_str(), text_color, color1, color2, width, height, opacity);
-			}
+			owner = (char *) (ddmain + 4 + 0x50 * ownerId);
 		}
+		DWORD totalhp = 0;
+		DWORD addr = This->gameglobal_dwordC + 0x4188 + 1308 * This->team_number_dword4;
+		for(int i=0; i < 8; i++) {
+			totalhp += *(WORD*)addr;
+			addr += 156;
+		}
+		int wins = *(unsigned char*)(teamdata+5);
+		std::string buff;
+		try {
+			buff = fmt::format(Config::getTeamNameFormat(), fmt::arg("name", text), fmt::arg("owner", owner), fmt::arg("hp", totalhp), fmt::arg("wins", wins));
+		} catch(std::exception & e) {
+			buff = fmt::format("Format error: {}", e.what());
+		}
+		return BitmapTextbox::origTextboxSetText(box, (char *) buff.c_str(), text_color, color1, color2, width, height, opacity);
 	}
 	return BitmapTextbox::origTextboxSetText(box, text, text_color, color1, color2, width, height, opacity);
+}
+
+
+void CTaskTeam::getMyTeams(std::vector<std::pair<std::string, std::vector<std::string>>> & teams) {
+	auto ddmain = W2App::getAddrDDMain();
+	if(!ddmain) return;
+	char mymachine = *(char *) (ddmain + 0xD9DC);
+	char numteams = *(char*)(ddmain + 0x44c);
+	for(int i=0; i < numteams; i++) {
+		DWORD teamdata = ddmain + 0x450 + i * 0xBB8;
+		char ownerId = *(char *) teamdata;
+		if (ownerId == mymachine) {
+			char *name = (char *) (teamdata + 6);
+			std::vector<std::string> worms;
+			for (int j = 0; j < 8; j++) {
+				char *worm = (char *) (teamdata + 0xA77 + j * 40);
+				worms.emplace_back(worm);
+			}
+			teams.emplace_back(name, worms);
+		}
+	}
 }
 
 DWORD addrDrawTeamBar_patch1_ret;
