@@ -1,7 +1,7 @@
 # wkWormOrder v.1.2.0
 _Worms Armageddon WormKit module that appends worm order numbers to their names and allows randomizing the worm order within the team in multiplayer games._
 
-** Usage of this module should be discussed with other players beforehand. **
+**Usage of this module should be discussed with other players beforehand.**
 
 ## Features
 - To enable displaying order of your worms, use **/order my** command in game chat.
